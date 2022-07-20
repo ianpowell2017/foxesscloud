@@ -47,8 +47,8 @@ namespace FoxCloudEss.Test
         {
             var deviceId = Guid.NewGuid().ToString();
             var s = new Service();
-            await s.ConnectAsync("username", "password");
-            var result = await s.GetAddressBookAsync(deviceId);
+            var (success, token) = await s.ConnectAsync("username", "password");
+            var result = await s.GetAddressBookAsync(token, deviceId);
         }
 
         [TestMethod]
@@ -56,8 +56,8 @@ namespace FoxCloudEss.Test
         {
             var deviceId = Guid.NewGuid().ToString();
             var s = new Service();
-            await s.ConnectAsync("username", "password");
-            var result = await s.GetReportAsync(deviceId, DateTime.Now.AddDays(-1));
+            var (success, token) = await s.ConnectAsync("username", "password");
+            var result = await s.GetReportAsync(token, deviceId, DateTime.Now.AddDays(-1));
         }
 
         [TestMethod]
@@ -65,8 +65,8 @@ namespace FoxCloudEss.Test
         {
             var deviceId = Guid.NewGuid().ToString();
             var s = new Service();
-            await s.ConnectAsync("username", "password");
-            var result = await s.GetRawAsync(deviceId, DateTime.Now.AddHours(-1));
+            var (success, token) = await s.ConnectAsync("username", "password");
+            var result = await s.GetRawAsync(token, deviceId, DateTime.Now.AddHours(-1));
 
             // Time format - 2022-07-19 16:00:51 BST+0100
         }

@@ -11,12 +11,10 @@ namespace FoxCloudEss
     public partial class Service
     {
         private RestClient _client;
-        private string _token;
 
-        public Service(string token = null)
+        public Service()
         {
             _client = new RestClient("https://www.foxesscloud.com");
-            _token = token;
         }
 
         /// <summary>
@@ -25,7 +23,7 @@ namespace FoxCloudEss
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public async Task<bool> ConnectAsync(string username, string password)
+        public async Task<(bool, string)> ConnectAsync(string username, string password)
         {
             var hashedPassword = GenerateHashedPassword(password);
 
@@ -36,11 +34,10 @@ namespace FoxCloudEss
             var response = await _client.ExecuteAsync<AuthResponse>(request);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                _token = response.Data.Result.Token;
-                return true;
+                return (true, response.Data.Result.Token);
             }
 
-            return false;
+            return (false, null);
         }
 
         /// <summary>
@@ -49,14 +46,14 @@ namespace FoxCloudEss
         /// <param name="deviceId"></param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
-        public async Task<AddressBookResponse> GetAddressBookAsync(string deviceId)
+        public async Task<AddressBookResponse> GetAddressBookAsync(string token, string deviceId)
         {
-            if (string.IsNullOrEmpty(_token))
+            if (string.IsNullOrEmpty(token))
                 throw new ApplicationException("Not logged in");
 
             var request = new RestRequest("c/v0/device/addressbook", Method.Get);
             request.AddQueryParameter("deviceID", deviceId);
-            request.AddHeader("token", _token);
+            request.AddHeader("token", token);
             addHeaders(ref request);
             var response = await _client.ExecuteAsync<AddressBookResponse>(request);
 
@@ -70,13 +67,13 @@ namespace FoxCloudEss
         /// <param name="reportDate"></param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
-        public async Task<ReportResponse> GetReportAsync(string deviceId, DateTime reportDate)
+        public async Task<ReportResponse> GetReportAsync(string token, string deviceId, DateTime reportDate)
         {
-            if (string.IsNullOrEmpty(_token))
+            if (string.IsNullOrEmpty(token))
                 throw new ApplicationException("Not logged in");
 
             var request = new RestRequest("c/v0/device/history/report", Method.Post);
-            request.AddHeader("token", _token);
+            request.AddHeader("token", token);
             addHeaders(ref request);
             request.AddJsonBody(new ReportRequest
             {
@@ -104,13 +101,13 @@ namespace FoxCloudEss
         /// <param name="reportDate"></param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
-        public async Task<RawDataResponse> GetRawAsync(string deviceId, DateTime reportDate)
+        public async Task<RawDataResponse> GetRawAsync(string token, string deviceId, DateTime reportDate)
         {
-            if (string.IsNullOrEmpty(_token))
+            if (string.IsNullOrEmpty(token))
                 throw new ApplicationException("Not logged in");
 
             var request = new RestRequest("c/v0/device/history/raw", Method.Post);
-            request.AddHeader("token", _token);
+            request.AddHeader("token", token);
             addHeaders(ref request);
             request.AddJsonBody(new RawDataRequest
             {
