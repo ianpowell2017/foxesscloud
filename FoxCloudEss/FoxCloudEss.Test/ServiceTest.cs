@@ -19,17 +19,31 @@ namespace FoxCloudEss.Test
             BATTERY_LEVELS = {"High": 80, "Medium": 50, "Low": 25, "Empty": 10}
         */
 
+        private const string Username = "";
+        private const string Password = "";
+
+        [TestInitialize]
+        public void Initialise()
+        {
+
+        }
+
+        private Service getService()
+        {
+            return new Service();
+        }
+
         [TestMethod]
         public async Task ConnectAsyncTest()
         {
-            var s = new Service();
-            await s.ConnectAsync("username", "password");
+            var s = getService();
+            await s.ConnectAsync(Username, Password);
         }
 
         [TestMethod]
         public void GenerateHashedPasswordTest()
         {
-            var s = new Service();
+            var s = getService();
             var result = s.GenerateHashedPassword("password");
             Assert.IsNotNull(result);
             Assert.AreNotEqual(string.Empty, result);
@@ -46,8 +60,8 @@ namespace FoxCloudEss.Test
         public async Task AddressBookTest()
         {
             var deviceId = Guid.NewGuid().ToString();
-            var s = new Service();
-            var (success, token) = await s.ConnectAsync("username", "password");
+            var s = getService();
+            var (success, token) = await s.ConnectAsync(Username, Password);
             var result = await s.GetAddressBookAsync(token, deviceId);
         }
 
@@ -55,8 +69,8 @@ namespace FoxCloudEss.Test
         public async Task GetReportAsyncTest()
         {
             var deviceId = Guid.NewGuid().ToString();
-            var s = new Service();
-            var (success, token) = await s.ConnectAsync("username", "password");
+            var s = getService();
+            var (success, token) = await s.ConnectAsync(Username, Password); ;
             var result = await s.GetReportAsync(token, deviceId, DateTime.Now.AddDays(-1));
         }
 
@@ -64,7 +78,7 @@ namespace FoxCloudEss.Test
         public async Task GetRawAsyncTest()
         {
             var deviceId = Guid.NewGuid().ToString();
-            var s = new Service();
+            var s = getService();
             var (success, token) = await s.ConnectAsync("username", "password");
             var result = await s.GetRawAsync(token, deviceId, DateTime.Now.AddHours(-1));
 
@@ -74,7 +88,7 @@ namespace FoxCloudEss.Test
         [TestMethod]
         public void ConvertDateTimeToQueryDateTest()
         {
-            var s = new Service();
+            var s = getService();
             var result = s.ConvertDateTimeToQueryDate(DateTime.Parse("2022-08-09 15:23:56"));
             Assert.AreEqual("2022", result.Year);
             Assert.AreEqual("08", result.Month);
