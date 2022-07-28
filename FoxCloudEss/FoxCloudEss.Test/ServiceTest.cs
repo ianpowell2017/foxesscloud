@@ -19,8 +19,9 @@ namespace FoxCloudEss.Test
             BATTERY_LEVELS = {"High": 80, "Medium": 50, "Low": 25, "Empty": 10}
         */
 
-        private const string Username = "";
-        private const string Password = "";
+        private const string Username = "Your Username";
+        private const string Password = "Your Password";
+        private const string DeviceId = "Your device id";
 
         [TestInitialize]
         public void Initialise()
@@ -59,28 +60,25 @@ namespace FoxCloudEss.Test
         [TestMethod]
         public async Task AddressBookTest()
         {
-            var deviceId = Guid.NewGuid().ToString();
             var s = getService();
             var (success, token) = await s.ConnectAsync(Username, Password);
-            var result = await s.GetAddressBookAsync(token, deviceId);
+            var result = await s.GetAddressBookAsync(token, DeviceId);
         }
 
         [TestMethod]
         public async Task GetReportAsyncTest()
         {
-            var deviceId = Guid.NewGuid().ToString();
             var s = getService();
             var (success, token) = await s.ConnectAsync(Username, Password); ;
-            var result = await s.GetReportAsync(token, deviceId, DateTime.Now.AddDays(-1));
+            var result = await s.GetReportAsync(token, DeviceId, DateTime.Now.AddDays(-1));
         }
 
         [TestMethod]
         public async Task GetRawAsyncTest()
         {
-            var deviceId = Guid.NewGuid().ToString();
             var s = getService();
-            var (success, token) = await s.ConnectAsync("username", "password");
-            var result = await s.GetRawAsync(token, deviceId, DateTime.Now.AddHours(-1));
+            var (success, token) = await s.ConnectAsync(Username, Password);
+            var result = await s.GetRawAsync(token, DeviceId, DateTime.Now.AddHours(-1));
 
             // Time format - 2022-07-19 16:00:51 BST+0100
         }
